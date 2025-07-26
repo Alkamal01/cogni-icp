@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/cogni-icp-backend"
+]
+resolver = "2"
