@@ -12,9 +12,9 @@ const MockSuiWallet: React.FC<MockSuiWalletProps> = ({ className = '' }) => {
   const [copied, setCopied] = useState(false);
 
   // Generate a mock wallet address based on user's ZK login address or create one
-  const getWalletAddress = () => {
-    if (user?.wallet_address) {
-      return user.wallet_address;
+  const getWalletAddress = (): string => {
+    if (user?.wallet_address && user.wallet_address.length > 0 && user.wallet_address[0]) {
+      return user.wallet_address[0];
     }
     
     // Generate a mock address based on user's email or ID

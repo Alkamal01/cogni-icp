@@ -1,6 +1,8 @@
 use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use ic_stable_structures::storable::{Storable, Bound};
+use std::borrow::Cow;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct SubscriptionPlan {
@@ -13,6 +15,12 @@ pub struct SubscriptionPlan {
     pub paystack_plan_code: Option<String>,
     pub is_active: bool,
     pub created_at: u64,
+}
+
+impl Storable for SubscriptionPlan {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -35,6 +43,12 @@ pub struct UserSubscription {
     pub cancelled_at: Option<u64>,
 }
 
+impl Storable for UserSubscription {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
+}
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct PaymentTransaction {
     pub id: u64,
@@ -51,4 +65,10 @@ pub struct PaymentTransaction {
     pub payment_metadata: Option<HashMap<String, String>>,
     pub created_at: u64,
     pub paid_at: Option<u64>,
+}
+
+impl Storable for PaymentTransaction {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
 } 

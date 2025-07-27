@@ -1,6 +1,11 @@
 {
   "version": 1,
   "canisters": {
+    "cogni-icp-backend": {
+      "type": "rust",
+      "package": "cogni-icp-backend",
+      "candid": "src/cogni-icp-backend/cogni-icp-backend.did"
+    },
     "cogni-icp-frontend": {
       "type": "assets",
       "source": [
@@ -9,11 +14,6 @@
       "dependencies": [
         "cogni-icp-backend"
       ]
-    },
-    "cogni-icp-backend": {
-      "candid": "src/cogni-icp-backend/cogni-icp-backend.did",
-      "package": "cogni-icp-backend",
-      "type": "rust"
     }
   },
   "defaults": {

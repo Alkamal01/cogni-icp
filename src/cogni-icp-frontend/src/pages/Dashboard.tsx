@@ -277,7 +277,7 @@ const Dashboard: React.FC = () => {
           <div className="flex justify-between items-center relative z-10">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Welcome back, {user?.first_name || 'Learner'}!
+                Welcome back, {user?.username || 'Learner'}!
               </h1>
               <p className="text-gray-600 dark:text-blue-200 mt-2 text-lg">
                 Here's what's happening with your learning journey

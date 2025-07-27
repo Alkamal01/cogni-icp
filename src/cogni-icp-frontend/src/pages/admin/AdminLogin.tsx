@@ -19,7 +19,7 @@ const AdminLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login, setUser } = useAuth();
+  const { login } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const { theme, toggleTheme } = useTheme();
@@ -53,7 +53,7 @@ const AdminLogin: React.FC = () => {
           ...data.user,
           is_admin: true // Ensure admin flag is set
         };
-        setUser(userData);
+        login();
         
         navigate('/admin/dashboard');
         

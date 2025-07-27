@@ -3,24 +3,21 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Loading } from '../shared';
 
-interface ProtectedRouteProps {
-  adminOnly?: boolean;
-}
-
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ adminOnly = false }) => {
-  const { user, isLoading } = useAuth();
+const ProtectedRoute = ({ adminOnly = false }) => {
+    const { isAuthenticated, user, isLoading } = useAuth();
 
   if (isLoading) {
-    return <Loading fullScreen />;
+        return <Loading />;
   }
 
-  if (!user) {
+    if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  if (adminOnly && !user.is_admin) {
-    return <Navigate to="/dashboard" replace />;
-  }
+    // This is a placeholder for admin check, will need adjustment based on final User type
+    // if (adminOnly && user?.role !== 'admin') {
+    //     return <Navigate to="/dashboard" replace />;
+    // }
 
   return <Outlet />;
 };

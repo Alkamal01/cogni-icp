@@ -30,7 +30,7 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
   const { showToast } = useToast();
   
   // Cache and debouncing refs
-  const lastFetchedUserId = useRef<number | null>(null);
+  const lastFetchedUserId = useRef<string | null>(null);
   const fetchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const isFetchingRef = useRef(false);
 
@@ -48,7 +48,7 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
     }
 
     // Skip if we already have data for this user (unless forced)
-    if (!forceRefresh && lastFetchedUserId.current === user.id && subscription) {
+    if (!forceRefresh && lastFetchedUserId.current === user.id.toString() && subscription) {
       setLoading(false);
       return;
     }
@@ -57,7 +57,7 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
     setLoading(true);
 
     try {
-      console.log('Fetching subscription data for user:', user.id);
+      console.log('Fetching subscription data for user:', user.id.toString());
       
       // Fetch subscription data first, then status if needed
       const subscriptionData = await billingService.getSubscription().catch(err => {
@@ -71,7 +71,7 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
       if (!subscriptionData) {
         const defaultFreeSubscription: UserSubscription = {
           id: 0,
-          user_id: user.id,
+          user_id: parseInt(user.id.toString().slice(0, 8), 16), // Convert Principal to number
           plan: {
             id: 1,
             name: 'Free',
@@ -120,7 +120,7 @@ export const SubscriptionProvider: React.FC<SubscriptionProviderProps> = ({ chil
       setSubscriptionStatus(null);
       
       // Update cache
-      lastFetchedUserId.current = user.id;
+      lastFetchedUserId.current = user.id.toString();
     } catch (error) {
       console.error('Error in fetchSubscriptionData:', error);
       // Set default free tier access

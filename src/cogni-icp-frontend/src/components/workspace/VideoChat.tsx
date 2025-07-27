@@ -51,8 +51,8 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
     // Join video room
     socket.emit('join_video', { 
       session_id: sessionId, 
-      user_id: user?.id,
-      user_name: user?.name
+      user_id: user?.id?.toString(),
+      user_name: user?.username || 'Anonymous'
     });
     
     // Listen for participants updates
@@ -84,7 +84,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
     return () => {
       socket.emit('leave_video', { 
         session_id: sessionId, 
-        user_id: user?.id 
+        user_id: user?.id?.toString() 
       });
       socket.off('participant_update');
       socket.off('video_chat_message');
@@ -100,7 +100,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
     if (socket && sessionId) {
       socket.emit('update_media_state', {
         session_id: sessionId,
-        user_id: user?.id,
+        user_id: user?.id?.toString(),
         audio: newState,
         video: isVideoEnabled
       });
@@ -138,7 +138,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
     if (socket && sessionId) {
       socket.emit('update_media_state', {
         session_id: sessionId,
-        user_id: user?.id,
+        user_id: user?.id?.toString(),
         audio: isAudioEnabled,
         video: newState
       });
@@ -158,7 +158,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
       if (user) {
         const selfParticipant: Participant = {
           id: user.id.toString(),
-          name: user.name,
+          name: user.username || 'Anonymous',
           isAudioEnabled: false,
           isVideoEnabled: false
         };
@@ -199,7 +199,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
     if (socket && sessionId) {
       socket.emit('leave_video', { 
         session_id: sessionId, 
-        user_id: user?.id 
+        user_id: user?.id?.toString() 
       });
     }
   };
@@ -212,7 +212,7 @@ const VideoChat: React.FC<VideoChatProps> = ({ sessionId, participants }) => {
     
     const msgData = {
       id: Math.random().toString(36).substr(2, 9),
-      user: user?.name || 'Anonymous',
+      user: user?.username || 'Anonymous',
       content: message,
       timestamp: new Date().toISOString()
     };

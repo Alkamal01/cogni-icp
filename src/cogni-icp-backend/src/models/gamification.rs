@@ -1,6 +1,8 @@
 use candid::{CandidType, Principal};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use ic_stable_structures::storable::{Storable, Bound};
+use std::borrow::Cow;
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct Achievement {
@@ -18,6 +20,12 @@ pub struct Achievement {
     pub created_by: Principal,
 }
 
+impl Storable for Achievement {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
+}
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct UserAchievement {
     pub id: u64,
@@ -30,6 +38,12 @@ pub struct UserAchievement {
     pub points_earned: u32,
     pub created_at: u64,
     pub updated_at: u64,
+}
+
+impl Storable for UserAchievement {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
 }
 
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
@@ -52,6 +66,12 @@ pub struct Task {
     pub metadata: Option<HashMap<String, String>>,
 }
 
+impl Storable for Task {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
+}
+
 #[derive(CandidType, Serialize, Deserialize, Clone, Debug)]
 pub struct UserTaskCompletion {
     pub id: u64,
@@ -63,4 +83,10 @@ pub struct UserTaskCompletion {
     pub completion_count: u32,
     pub proof_data: Option<String>, // JSON string
     pub metadata: Option<HashMap<String, String>>,
+}
+
+impl Storable for UserTaskCompletion {
+    fn to_bytes(&self) -> Cow<[u8]> { Cow::Owned(serde_cbor::to_vec(&self).unwrap()) }
+    fn from_bytes(bytes: Cow<[u8]>) -> Self { serde_cbor::from_slice(bytes.as_ref()).unwrap() }
+    const BOUND: Bound = Bound::Unbounded;
 } 

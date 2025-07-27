@@ -7,7 +7,7 @@ const HeroSection: React.FC = () => {
   const navigate = useNavigate();
   
   const handleGetStarted = () => {
-    navigate('/register');
+    navigate('/login');
   };
 
   const handleLearnMore = () => {

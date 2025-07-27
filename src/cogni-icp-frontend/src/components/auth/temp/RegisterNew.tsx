@@ -38,7 +38,7 @@ const Register: React.FC = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const { register, socialLogin } = useAuth();
+  const { login } = useAuth();
   const { connectWallet, isWalletConnected, wallet, isLoading: suiLoading } = useSui();
 
   // Validate form when form data changes
@@ -176,7 +176,7 @@ const Register: React.FC = () => {
     if (isFormValid) {
       setLoading(true);
       try {
-        await register(formData);
+        await login();
         navigate('/registration-success');
       } catch (err: any) {
         const errorMessage = err.response?.data?.error || 'An error occurred during registration.';
@@ -188,7 +188,9 @@ const Register: React.FC = () => {
   };
 
   const handleSocialSignUp = (provider: string) => {
-    socialLogin(provider);
+    // This function is no longer needed as social login is handled by the login context
+    // Keeping it for now, but it will be removed if not used elsewhere.
+    console.warn("Social sign-up is not directly supported in this component. Use the login page.");
   };
 
   // Handle zkLogin callback

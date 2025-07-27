@@ -10,6 +10,8 @@ use state::{CONNECTIONS, CONNECTION_REQUESTS};
 use candid::Principal;
 use models::study_group::{StudyGroup, GroupMembership};
 use state::{STUDY_GROUPS, GROUP_MEMBERSHIPS};
+use models::gamification::{Task, UserTaskCompletion};
+use state::{TASKS, USER_TASK_COMPLETIONS};
 
 #[ic_cdk::query]
 fn get_self() -> Option<User> {
@@ -294,3 +296,159 @@ fn join_study_group(group_id: u64) -> Result<GroupMembership, String> {
 fn get_study_group(id: u64) -> Option<StudyGroup> {
     STUDY_GROUPS.with(|groups| groups.borrow().get(&id))
 }
+
+#[ic_cdk::update]
+fn create_task(
+    title: String,
+    description: String,
+    category: String,
+    difficulty: String,
+    token_reward: u32,
+    points_reward: u32,
+) -> Result<Task, String> {
+    let caller = ic_cdk::caller();
+    // TODO: Add check to ensure caller is an admin
+
+    let task_id = next_id("task");
+    let new_task = Task {
+        id: task_id,
+        public_id: task_id.to_string(),
+        title,
+        description,
+        category,
+        difficulty,
+        token_reward,
+        points_reward,
+        requirements: None,
+        is_active: true,
+        is_repeatable: false,
+        max_completions: 1,
+        created_by: caller,
+        created_at: ic_cdk::api::time(),
+        expires_at: None,
+        metadata: None,
+    };
+
+    TASKS.with(|tasks| {
+        tasks.borrow_mut().insert(task_id, new_task.clone());
+    });
+
+    Ok(new_task)
+}
+
+#[ic_cdk::update]
+fn complete_task(task_id: u64) -> Result<UserTaskCompletion, String> {
+    let caller = ic_cdk::caller();
+    
+    let task = TASKS.with(|tasks| tasks.borrow().get(&task_id))
+        .ok_or("Task not found.".to_string())?;
+
+    // TODO: Add validation to check if user has already completed the task
+
+    let completion_id = next_id("user_task_completion");
+    let new_completion = UserTaskCompletion {
+        id: completion_id,
+        user_id: caller,
+        task_id,
+        completed_at: ic_cdk::api::time(),
+        tokens_earned: task.token_reward,
+        points_earned: task.points_reward,
+        completion_count: 1,
+        proof_data: None,
+        metadata: None,
+    };
+
+    USER_TASK_COMPLETIONS.with(|completions| {
+        completions.borrow_mut().insert(completion_id, new_completion.clone());
+    });
+
+    // TODO: Update user's token/point balance
+
+    Ok(new_completion)
+}
+
+#[ic_cdk::query]
+fn get_tasks() -> Vec<Task> {
+    TASKS.with(|tasks| {
+        tasks.borrow().iter().map(|(_, task)| task.clone()).collect()
+    })
+}
+
+// --- Admin Methods ---
+
+#[ic_cdk::query]
+fn get_all_users_admin() -> Result<Vec<User>, String> {
+    if !is_admin(ic_cdk::caller()) {
+        return Err("Only admins can perform this action.".to_string());
+    }
+    Ok(USERS.with(|users| users.borrow().iter().map(|(_, user)| user.clone()).collect()))
+}
+
+#[ic_cdk::update]
+fn update_user_status_admin(user_id: Principal, status: String) -> Result<User, String> {
+    if !is_admin(ic_cdk::caller()) {
+        return Err("Only admins can perform this action.".to_string());
+    }
+    
+    USERS.with(|users| {
+        let mut users_mut = users.borrow_mut();
+        if let Some(mut user) = users_mut.get(&user_id) {
+            user.status = status;
+            users_mut.insert(user_id, user.clone());
+            Ok(user)
+        } else {
+            Err("User not found.".to_string())
+        }
+    })
+}
+
+// --- Billing Methods (Placeholders) ---
+
+// TODO: Implement full logic for creating subscription plans
+#[ic_cdk::update]
+fn create_subscription_plan_admin(/* params */) -> Result<(), String> {
+    if !is_admin(ic_cdk::caller()) {
+        return Err("Only admins can perform this action.".to_string());
+    }
+    // Placeholder
+    Ok(())
+}
+
+// TODO: Implement logic for creating a new subscription (HTTPS outcall to Paystack)
+#[ic_cdk::update]
+fn create_subscription(/* params */) -> Result<(), String> {
+    // Placeholder
+    Ok(())
+}
+
+
+// --- Blockchain Methods (Placeholders) ---
+
+// TODO: Implement logic for fetching wallet balance (HTTPS outcall to Sui network)
+#[ic_cdk::query]
+fn get_sui_wallet_balance(wallet_address: String) -> Result<u64, String> {
+    // Placeholder
+    Ok(0)
+}
+
+// TODO: Implement ZK proof verification logic
+#[ic_cdk::update]
+fn verify_zk_proof(/* params */) -> Result<bool, String> {
+    // Placeholder
+    Ok(true)
+}
+
+// --- Private Helper Functions ---
+
+fn is_admin(principal: Principal) -> bool {
+    USERS.with(|users| {
+        if let Some(user) = users.borrow().get(&principal) {
+            user.role == "admin"
+        } else {
+            false
+        }
+    })
+}
+
+// --- Candid Generation ---
+ic_cdk::export_candid!();

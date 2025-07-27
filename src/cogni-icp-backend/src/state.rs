@@ -9,6 +9,8 @@ use crate::models::{
         polls::{GroupPoll, PollVote},
         sessions::{StudySession, SessionParticipant},
     },
+    billing::{SubscriptionPlan, UserSubscription, PaymentTransaction},
+    gamification::{Achievement, UserAchievement, Task, UserTaskCompletion},
 };
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 use ic_stable_structures::{DefaultMemoryImpl, StableBTreeMap, StableCell};
@@ -27,9 +29,16 @@ const CONNECTION_MEMORY_ID: MemoryId = MemoryId::new(4);
 const CONNECTION_REQUEST_MEMORY_ID: MemoryId = MemoryId::new(5);
 const STUDY_GROUP_MEMORY_ID: MemoryId = MemoryId::new(6);
 const GROUP_MEMBERSHIP_MEMORY_ID: MemoryId = MemoryId::new(7);
+const SUBSCRIPTION_PLAN_MEMORY_ID: MemoryId = MemoryId::new(8);
+const USER_SUBSCRIPTION_MEMORY_ID: MemoryId = MemoryId::new(9);
+const PAYMENT_TRANSACTION_MEMORY_ID: MemoryId = MemoryId::new(10);
+const ACHIEVEMENT_MEMORY_ID: MemoryId = MemoryId::new(11);
+const USER_ACHIEVEMENT_MEMORY_ID: MemoryId = MemoryId::new(12);
+const TASK_MEMORY_ID: MemoryId = MemoryId::new(13);
+const USER_TASK_COMPLETION_MEMORY_ID: MemoryId = MemoryId::new(14);
 
 
-const ID_COUNTER_MEMORY_ID: MemoryId = MemoryId::new(10);
+const ID_COUNTER_MEMORY_ID: MemoryId = MemoryId::new(20);
 
 
 #[derive(serde::Serialize, serde::Deserialize, Default, Clone)]
@@ -41,6 +50,13 @@ struct IdCounters {
     connection_request: u64,
     study_group: u64,
     group_membership: u64,
+    subscription_plan: u64,
+    user_subscription: u64,
+    payment_transaction: u64,
+    achievement: u64,
+    user_achievement: u64,
+    task: u64,
+    user_task_completion: u64,
 }
 
 impl Storable for IdCounters {
@@ -116,6 +132,49 @@ thread_local! {
         )
     );
 
+    // Stable storage for Billing
+    pub static SUBSCRIPTION_PLANS: RefCell<StableBTreeMap<u64, SubscriptionPlan, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(SUBSCRIPTION_PLAN_MEMORY_ID)),
+        )
+    );
+
+    pub static USER_SUBSCRIPTIONS: RefCell<StableBTreeMap<u64, UserSubscription, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(USER_SUBSCRIPTION_MEMORY_ID)),
+        )
+    );
+
+    pub static PAYMENT_TRANSACTIONS: RefCell<StableBTreeMap<u64, PaymentTransaction, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(PAYMENT_TRANSACTION_MEMORY_ID)),
+        )
+    );
+
+    // Stable storage for Gamification
+    pub static ACHIEVEMENTS: RefCell<StableBTreeMap<u64, Achievement, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(ACHIEVEMENT_MEMORY_ID)),
+        )
+    );
+
+    pub static USER_ACHIEVEMENTS: RefCell<StableBTreeMap<u64, UserAchievement, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(USER_ACHIEVEMENT_MEMORY_ID)),
+        )
+    );
+
+    pub static TASKS: RefCell<StableBTreeMap<u64, Task, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(TASK_MEMORY_ID)),
+        )
+    );
+
+    pub static USER_TASK_COMPLETIONS: RefCell<StableBTreeMap<u64, UserTaskCompletion, Memory>> = RefCell::new(
+        StableBTreeMap::init(
+            MEMORY_MANAGER.with(|m| m.borrow().get(USER_TASK_COMPLETION_MEMORY_ID)),
+        )
+    );
 
     // Stable cell for ID counters
     pub static ID_COUNTERS: RefCell<StableCell<IdCounters, Memory>> = RefCell::new(
@@ -166,6 +225,41 @@ pub fn next_id(entity: &str) -> u64 {
                 current_counters.group_membership += 1;
                 writer.set(current_counters).unwrap();
                 writer.get().group_membership
+            }
+            "subscription_plan" => {
+                current_counters.subscription_plan += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().subscription_plan
+            }
+            "user_subscription" => {
+                current_counters.user_subscription += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().user_subscription
+            }
+            "payment_transaction" => {
+                current_counters.payment_transaction += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().payment_transaction
+            }
+            "achievement" => {
+                current_counters.achievement += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().achievement
+            }
+            "user_achievement" => {
+                current_counters.user_achievement += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().user_achievement
+            }
+            "task" => {
+                current_counters.task += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().task
+            }
+            "user_task_completion" => {
+                current_counters.user_task_completion += 1;
+                writer.set(current_counters).unwrap();
+                writer.get().user_task_completion
             }
             _ => panic!("Unknown entity type for ID generation"),
         }

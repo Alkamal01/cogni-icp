@@ -210,7 +210,7 @@ const GroupDetail: React.FC = () => {
       setLoading(true);
       
       // Enhanced debug information
-      const currentMember = members.find(m => m.user_id === user?.id);
+      const currentMember = members.find(m => m.user_id.toString() === user?.id?.toString());
       console.log("Current user:", user);
       console.log("Group ID:", groupPublicId);
       console.log("Current user's role in group:", currentMember?.role);
@@ -236,12 +236,12 @@ const GroupDetail: React.FC = () => {
       const newActivity: GroupActivity = {
         id: Date.now(),
         group_id: group.id,
-        user_id: user?.id || 0,
+        user_id: user?.id ? parseInt(user.id.toString().slice(0, 8), 16) : 0,
         activity_type: 'session_scheduled',
         content: JSON.stringify(sessionData),
         created_at: new Date().toISOString(),
         user: {
-          id: user?.id || 0,
+          id: user?.id ? parseInt(user.id.toString().slice(0, 8), 16) : 0,
           username: user?.username || 'You'
         }
       };
@@ -868,8 +868,8 @@ const GroupDetail: React.FC = () => {
         groupId={groupPublicId}
         groupName={group.name}
         members={adaptMembersForModal(members)}
-        currentUserId={user?.id || 0}
-        isAdmin={members.find(m => m.user_id === user?.id)?.role === 'admin'}
+        currentUserId={user?.id ? parseInt(user.id.toString().slice(0, 8), 16) : 0}
+        isAdmin={members.find(m => m.user_id.toString() === user?.id?.toString())?.role === 'admin'}
         creatorId={group.creator_id}
         onMemberUpdate={fetchData}
       />

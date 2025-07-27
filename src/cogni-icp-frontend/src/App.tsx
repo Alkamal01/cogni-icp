@@ -1,15 +1,15 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { SocketProvider } from './contexts/SocketContext';
 import { SubscriptionProvider } from './contexts/SubscriptionContext';
 import { SuiProvider } from './contexts/SuiContext';
-import { Login, Register, ConfirmPage, RegistrationSuccess, ForgotPassword, ResetPassword, ProtectedRoute, GuestRoute, OAuthCallback, ResendVerification, SuiLogin } from './components/auth';
+import { ProtectedRoute, GuestRoute } from './components/auth';
 import { Layout } from './components/shared';
 import { LearningPathDetail } from './components/learning';
 import LandingPage from './pages/LandingPage';
+import Login from './pages/Login';
 import Features from './pages/Features';
 import Pricing from './pages/Pricing';
 import About from './pages/About';
@@ -23,7 +23,7 @@ import ScrollToTop from './components/utils/ScrollToTop';
 const App: React.FC = () => {
   return (
     <ThemeProvider>
-      <AuthProvider>
+      {/* AuthProvider is now wrapping the app in main.jsx, so it's not needed here */}
         <ToastProvider>
           <SubscriptionProvider>
             <SuiProvider>
@@ -33,33 +33,12 @@ const App: React.FC = () => {
               <Routes>
                   {/* Public marketing pages */}
                 <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
                 <Route path="/features" element={<Features />} />
                 <Route path="/pricing" element={<Pricing />} />
                 <Route path="/testimonials" element={<Testimonials />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />
-
-                  {/* Guest routes (for non-logged-in users) */}
-                  <Route element={<GuestRoute />}>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                    <Route path="/reset-password/:token" element={<ResetPassword />} />
-                    <Route path="/sui-login" element={<SuiLogin />} />
-                  </Route>
-
-                  {/* Routes that don't need guest/auth protection */}
-                  <Route path="/confirm/:token" element={<ConfirmPage />} />
-                  <Route path="/verify-email/:token" element={<ConfirmPage />} />
-                  <Route path="/resend-verification" element={<ResendVerification />} />
-                  <Route path="/registration-success" element={<RegistrationSuccess />} />
-                  <Route path="/oauth-callback" element={<OAuthCallback />} />
-                
-                {/* Admin routes */}
-                <Route path="/admin/login" element={<AdminLogin />} />
-                  <Route element={<ProtectedRoute adminOnly />}>
-                <Route path="/admin/dashboard" element={<AdminDashboard />} />
-                  </Route>
                 
                 {/* Protected routes */}
                 <Route element={<ProtectedRoute />}>
@@ -88,7 +67,6 @@ const App: React.FC = () => {
           </SuiProvider>
           </SubscriptionProvider>
         </ToastProvider>
-      </AuthProvider>
     </ThemeProvider>
   );
 };

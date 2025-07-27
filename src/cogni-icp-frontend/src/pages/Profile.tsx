@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import { Card, Button, Input } from '../components/shared';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import { WalletManager } from '../components/auth';
-import MockSuiWallet from '../components/shared/MockSuiWallet';
 import { User, Mail, Award } from 'lucide-react';
+import MockSuiWallet from '../components/shared/MockSuiWallet';
 
 const Profile = () => {
   const { user } = useAuth();
   const { showToast } = useToast();
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
-    name: user?.name || '',
+    name: user?.username || '',
     email: user?.email || '',
     currentPassword: '',
     newPassword: '',

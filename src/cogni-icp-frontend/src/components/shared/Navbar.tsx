@@ -49,7 +49,7 @@ interface NavbarProps {
 }
 
 const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
-  const { user, logout } = useAuth();
+  const { isAuthenticated, login, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   // const [searchText, setSearchText] = useState(''); // Removed searchText state
@@ -259,6 +259,26 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
     loadConnectionData();
   }, []);
 
+  // Expanded placeholder user object
+  const user = isAuthenticated ? {
+    id: 1,
+    public_id: 'placeholder',
+    name: 'Authenticated User',
+    email: 'user@example.com',
+    username: 'Authenticated User',
+    first_name: 'Authenticated',
+    last_name: 'User',
+    is_verified: true,
+    created_at: '',
+    avatar_url: '',
+    bio: '',
+    points: 0,
+    badges: [],
+    survey_completed: true,
+    is_admin: false,
+    wallet_address: '',
+  } : null;
+
   return (
     <motion.nav 
       initial={{ opacity: 0, y: -10 }}
@@ -334,9 +354,9 @@ const Navbar: React.FC<NavbarProps> = ({ toggleSidebar }) => {
                 className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
               >
                 <div className="h-8 w-8 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 flex items-center justify-center text-white text-sm font-bold">
-                  {user ? user.first_name?.charAt(0) : ''}
+                  {user ? user.username?.charAt(0) : ''}
                 </div>
-                <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-200">{user?.first_name}</span>
+                <span className="hidden sm:inline text-sm font-medium text-gray-700 dark:text-gray-200">{user?.username}</span>
               </motion.button>
               
               <AnimatePresence>

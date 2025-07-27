@@ -15,6 +15,7 @@
 backend/
 # rust
 MIGRATION_PLAN.md
+cogni-icp-frontend.bak/
 target/
 
 # frontend code

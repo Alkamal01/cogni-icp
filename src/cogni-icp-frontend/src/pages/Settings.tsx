@@ -99,10 +99,10 @@ const Settings: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   
   const [profileData, setProfileData] = useState({
-    name: user?.name || '',
+    name: user?.username || '',
     email: user?.email || '',
-    bio: (user as { bio?: string })?.bio || '',
-    avatar_url: user?.avatar_url || '',
+    bio: user?.bio?.[0] || '', // Handle optional Candid type
+    avatar_url: user?.avatar_url?.[0] || '', // Handle optional Candid type
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',

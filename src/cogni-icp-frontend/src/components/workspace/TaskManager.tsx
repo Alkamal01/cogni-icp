@@ -201,7 +201,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
       priority: newTask.priority,
       creator: {
         id: user?.id?.toString() || '0',
-        name: user?.name || 'Anonymous'
+        name: user?.username || 'Anonymous'
       },
       assignee: newTask.assignee,
       createdAt: new Date().toISOString(),
@@ -697,7 +697,7 @@ const TaskManager: React.FC<TaskManagerProps> = ({
                       <Button
                         size="xs"
                         variant="primary"
-                        onClick={() => handleAssignTask(task.id, user?.id?.toString() || '0', user?.name || 'Me')}
+                        onClick={() => handleAssignTask(task.id, user?.id?.toString() || '0', user?.username || 'Me')}
                       >
                         Assign to me
                       </Button>
