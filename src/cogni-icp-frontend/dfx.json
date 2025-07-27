@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "canisters": {
+    "cogni_clean_frontend": {
+      "type": "assets",
+      "source": [
+        "dist"
+      ],
+      "dependencies": [
+        "cogni-icp-backend"
+      ]
+    },
+    "cogni-icp-backend": {
+      "candid": "../src/cogni-icp-backend/cogni-icp-backend.did",
+      "package": "cogni-icp-backend",
+      "type": "rust",
+      "workspace": ".."
+    }
+  },
+  "defaults": {
+    "build": {
+      "packtool": "npm run build",
+      "args": ""
+    }
+  },
+  "output_env_file": ".env"
+}

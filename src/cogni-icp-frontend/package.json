@@ -66,11 +66,9 @@
   "name": "cogni-icp-frontend",
   "private": true,
   "scripts": {
-    "build": "tsc && vite build",
-    "format": "prettier --write \"src/**/*.{json,js,jsx,ts,tsx,css,scss}\"",
-    "prebuild": "dfx generate",
-    "setup": "npm i && dfx canister create cogni-icp-backend && dfx generate cogni-icp-backend && dfx deploy",
+    "setup": "npm i && dfx canister create cogni-icp-frontend_backend && dfx generate cogni-icp-frontend_backend && dfx deploy",
     "start": "vite --port 3000",
+    "build": "tsc && vite build",
     "test": "vitest run"
   },
   "proxy": "http://127.0.0.1:5000",
