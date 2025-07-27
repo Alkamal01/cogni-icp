@@ -3,7 +3,12 @@ use crate::models::{
     tutor::{Tutor, TutorSession},
     learning_path::LearningPath,
     connections::{UserConnection, ConnectionRequest},
-    study_group::{StudyGroup, GroupMembership, GroupActivity, StudyResource, GroupMessage, GroupPoll, PollVote, StudySession, SessionParticipant},
+    study_group::{
+        StudyGroup, GroupMembership,
+        activity::{GroupActivity, StudyResource, GroupMessage},
+        polls::{GroupPoll, PollVote},
+        sessions::{StudySession, SessionParticipant},
+    },
 };
 use ic_stable_structures::memory_manager::{MemoryId, MemoryManager, VirtualMemory};
 use ic_stable_structures::{DefaultMemoryImpl, StableBTreeMap, StableCell};

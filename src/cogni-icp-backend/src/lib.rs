@@ -266,7 +266,7 @@ fn join_study_group(group_id: u64) -> Result<GroupMembership, String> {
     let caller = ic_cdk::caller();
     
     // Check if group exists
-    let group = STUDY_GROUPS.with(|groups| groups.borrow().get(&group_id))
+    let _group = STUDY_GROUPS.with(|groups| groups.borrow().get(&group_id))
         .ok_or("Study group not found.".to_string())?;
 
     // TODO: Add checks for private groups, max members, etc.
